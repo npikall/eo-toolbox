@@ -1,0 +1,67 @@
+[project]
+name = "eo-toolbox"
+version = "0.1.0"
+# dynamic = ["version"]
+description = "A Toolbox to work with Earth Observation Data"
+readme = "README.md"
+authors = [
+    { name = "npikall", email = "nikolas.pikall@tuwien.ac.at" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "numpy>=2.3.2",
+    "xarray>=2025.7.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "ruff",
+    "ty",
+    "pre-commit",
+]
+
+[tool.ruff]
+exclude = ["tests"]
+line-length = 79
+lint.fixable = ["ALL"]
+lint.select = ["ALL"]
+lint.ignore = [
+    "ANN401", # Any type in func args are not allowed
+    "D203",   # no blank lines between class def and docstring
+    "D213",   # multiline summary should start in first line
+    "PGH",    # pygrep hooks are ignored
+    "TD002",  # todo author assignment is ignored
+    "TD003",  # todo issue assignment is ignored
+    "T201",   # allow print statements
+    "COM812", # missing trailing comma is disabled
+]
+
+[tool.ruff.format]
+line-ending = "auto"
+docstring-code-line-length = 79
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_files = [
+    "pyproject.toml:version"
+]
+update_changelog_on_bump = true
+major_version_zero = true
+style = [
+    ["qmark", "fg:#ff9d00 bold"],
+    ["question", "bold"],
+    ["answer", "fg:#ff9d00 bold"],
+    ["pointer", "fg:#ff9d00 bold"],
+    ["highlighted", "fg:#ff9d00 bold"],
+    ["selected", "fg:#cc5454"],
+    ["separator", "fg:#cc5454"],
+    ["instruction", ""],
+    ["text", ""],
+    ["disabled", "fg:#858585 italic"]
+]
