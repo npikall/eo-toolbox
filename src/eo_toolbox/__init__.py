@@ -1,7 +1,5 @@
 # ruff: noqa: D104
-from eo_toolbox import calc
-from eo_toolbox import index
-from eo_toolbox import mask
+from eo_toolbox import calc, index, mask
 
 __all__ = [
     "calc",
