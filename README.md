@@ -33,4 +33,4 @@ To run the Test suite execute:
 just test
 ```
 
-Use the justfile aswell to run the linter, the formatter and the typechecker.
+Use the `justfile` aswell to run the linter, the formatter and the typechecker.
