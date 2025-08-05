@@ -9,18 +9,20 @@ class SCLValues(IntEnum):
     """Enum for Sentinel-2 Scene Classification Layer (SCL) values."""
 
     # https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/scene-classification/
-    NO_DATA = 0  # Not Wanted
-    DEFECTIVE = 1  # Not Wanted
-    DARK_SHADOWS = 2  # Not Wanted
-    CLOUD_SHADOWS = 3  # Not Wanted
-    VEGETATED = 4  # Wanted
-    NOT_VEGETATED = 5  # Wanted
-    WATER = 6  # Wanted
-    CLOUDS_LOW_PROB = 7  # ???
+    # fmt: off
+    NO_DATA = 0             # Not Wanted
+    DEFECTIVE = 1           # Not Wanted
+    DARK_SHADOWS = 2        # Not Wanted
+    CLOUD_SHADOWS = 3       # Not Wanted
+    VEGETATED = 4           # Wanted
+    NOT_VEGETATED = 5       # Wanted
+    WATER = 6               # Wanted
+    CLOUDS_LOW_PROB = 7     # ???
     CLOUDS_MEDIUM_PROB = 8  # Not Wanted
-    CLOUDS_HIGH_PROB = 9  # Not Wanted
-    THIN_CIRRUS = 10  # ???
-    SNOW_OR_ICE = 11  # Wanted
+    CLOUDS_HIGH_PROB = 9    # Not Wanted
+    THIN_CIRRUS = 10        # ???
+    SNOW_OR_ICE = 11        # Wanted
+    # fmt: on
 
 
 def is_valid_pixel(
