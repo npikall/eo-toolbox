@@ -1,14 +1,13 @@
 """Module to performe different calculations."""
 
-import numpy as np  # type: ignore
+import numpy as np
 import numpy.typing as npt  # type: ignore
-import xarray as xr  # type: ignore
 
 
-def normalized_difference(
-    band1: xr.DataArray,
-    band2: xr.DataArray,
-) -> xr.DataArray:
+def normalized_difference[T](
+    band1: T,
+    band2: T,
+) -> T:
     """Return the normalized difference between two bands.
 
     >>> nd = (band1 - band2) / (band1 + band2)

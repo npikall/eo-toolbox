@@ -5,7 +5,7 @@ import xarray as xr  # type: ignore
 from eo_toolbox.calc import normalized_difference
 
 
-def ndvi(red: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
+def ndvi[T](red: T, nir: T) -> T:
     """Compute the NDVI from the Red and the Near-Infrared Bands.
 
     NDVI = Normalized Difference Vegetation Index
@@ -19,7 +19,7 @@ def ndvi(red: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return normalized_difference(band1=nir, band2=red)
 
 
-def gndvi(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
+def gndvi[T](green: T, nir: T) -> T:
     """Compute the GNDVI from the Green and the Near-Infrared Bands.
 
     GNDVI = Green Normalized Difference Vegetation Index
@@ -34,7 +34,7 @@ def gndvi(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return normalized_difference(band1=nir, band2=green)
 
 
-def ndmi(nir: xr.DataArray, swir: xr.DataArray) -> xr.DataArray:
+def ndmi[T](nir: T, swir: T) -> T:
     """Compute the NDMI from the Near-Infrared and the Shortwave-IR Bands.
 
     NDMI = Normalized Difference Moisture Index
@@ -60,7 +60,7 @@ def ndmi(nir: xr.DataArray, swir: xr.DataArray) -> xr.DataArray:
     return normalized_difference(band1=nir, band2=swir)
 
 
-def ndwi(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
+def ndwi[T](green: T, nir: T) -> T:
     """Compute the NDWI from the Green and NIR Bands.
 
     NDWI = Normalized Difference Water Index
@@ -75,11 +75,11 @@ def ndwi(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return normalized_difference(band1=green, band2=nir)
 
 
-def savi(
-    nir: xr.DataArray,
-    red: xr.DataArray,
-    soil_adjustment_factor: float | xr.DataArray = 0.5,
-) -> xr.DataArray:
+def savi[T](
+    nir: T,
+    red: T,
+    soil_adjustment_factor: float | T = 0.5,
+) -> T:
     """Compute the SAVI from NIR and Red bands.
 
     SAVI = Soil Adjusted Vegetation Index
