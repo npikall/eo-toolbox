@@ -75,11 +75,11 @@ def ndwi[T](green: T, nir: T) -> T:
     return normalized_difference(band1=green, band2=nir)
 
 
-def savi[T](
-    nir: T,
-    red: T,
-    soil_adjustment_factor: float | T = 0.5,
-) -> T:
+def savi(
+    nir: xr.DataArray,
+    red: xr.DataArray,
+    soil_adjustment_factor: float | xr.DataArray = 0.5,
+) -> xr.DataArray:
     """Compute the SAVI from NIR and Red bands.
 
     SAVI = Soil Adjusted Vegetation Index
@@ -165,7 +165,7 @@ def vari(
     return (green - red) / (green + red - blue)
 
 
-def nbr(nir: xr.DataArray, swir: xr.DataArray) -> xr.DataArray:
+def nbr[T](nir: T, swir: T) -> T:
     """Compute the NBR from the Near-Infrared and Shortwave-IR Bands.
 
     NBR = Normalized Burn Ratio
@@ -211,7 +211,7 @@ def gci(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return (nir / green) - 1
 
 
-def ndsi(green: xr.DataArray, swir: xr.DataArray) -> xr.DataArray:
+def ndsi[T](green: T, swir: T) -> T:
     """Compute the NDSI from the Green and Shortwave-IR Bands.
 
     NDSI = Normalized Difference Snow Index
@@ -257,7 +257,7 @@ def recl(red: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return (nir / red) - 1
 
 
-def ndre(nir: xr.DataArray, red_edge: xr.DataArray) -> xr.DataArray:
+def ndre[T](nir: T, red_edge: T) -> T:
     """Compute the NDRE from the NIR and Red Edge Bands.
 
     NDRE = Normalized Difference Red Edge Index

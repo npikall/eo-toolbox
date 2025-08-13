@@ -39,10 +39,9 @@ def is_valid_pixel(
     if include_little_clouds:
         # include thin cirrus and clouds with low probability
         return (
-            (scl >= SCLValues.VEGETATED)
-            & (scl <= SCLValues.CLOUDS_MEDIUM_PROB)
+            (scl >= SCLValues.VEGETATED) & (scl <= SCLValues.CLOUDS_MEDIUM_PROB)
         ) | (scl >= SCLValues.THIN_CIRRUS)
 
-    return (
-        (scl >= SCLValues.VEGETATED) & (scl <= SCLValues.CLOUDS_LOW_PROB)
-    ) | (scl == SCLValues.SNOW_OR_ICE)
+    return ((scl >= SCLValues.VEGETATED) & (scl <= SCLValues.CLOUDS_LOW_PROB)) | (
+        scl == SCLValues.SNOW_OR_ICE
+    )

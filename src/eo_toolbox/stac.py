@@ -1,15 +1,18 @@
 """Module to load data from a preconfigured STAC Catalog."""
 
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Literal, Sequence
+from typing import Literal
 
 import odc.stac as odc_stac
 import xarray as xr
 from odc.geo.geobox import GeoBox
+from pydantic import HttpUrl, validate_call
 from pystac_client import Client
 
+from eo_toolbox.valid_types import BoundingBox, TimeRangeStr
+
 type XarrayObject = xr.DataArray | xr.Dataset
-type BoundingBox = tuple[float, float, float, float]
 
 
 class NoDataError(Exception):
@@ -20,22 +23,23 @@ class NoDataError(Exception):
 class CatalogConfig:
     """Attributes every config entry should hold."""
 
-    url: str
+    url: HttpUrl
     collections: list[str]
 
 
 CONFIG: dict[str, CatalogConfig] = {
     "element84": CatalogConfig(
-        url="https://earth-search.aws.element84.com/v1",
+        url=HttpUrl("https://earth-search.aws.element84.com/v1"),
         collections=["sentinel-2-l2a"],
-    )
+    ),
     # TODO: Add CDSE and other collections
 }
 
 
+@validate_call
 def sentinel2(  # noqa: PLR0913
     bounds: BoundingBox,
-    timerange: str,
+    timerange: TimeRangeStr,
     *,
     config: CatalogConfig = CONFIG["element84"],
     epsg: int = 4326,
@@ -49,7 +53,7 @@ def sentinel2(  # noqa: PLR0913
         chunks = {"time": "auto", "x": "auto", "y": "auto"}
 
     items = (
-        Client.open(config.url)
+        Client.open(config.url)  # type: ignore
         .search(
             bbox=bounds,
             collections=config.collections,
