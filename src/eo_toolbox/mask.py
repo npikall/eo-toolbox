@@ -1,4 +1,4 @@
-"""Module for operations related to masking in Earth Observation scl."""
+"""Module for operations related to masking EO Data."""
 
 from enum import IntEnum
 
@@ -24,6 +24,11 @@ class SCLValues(IntEnum):
     SNOW_OR_ICE = 11        # Wanted
     # fmt: on
 
+    @classmethod
+    def list(cls) -> list[str]:
+        """List all available Scene Classification Values available."""
+        return [member.name for member in cls]
+
 
 def is_valid_pixel(
     scl: xr.DataArray,
@@ -39,9 +44,10 @@ def is_valid_pixel(
     if include_little_clouds:
         # include thin cirrus and clouds with low probability
         return (
-            (scl >= SCLValues.VEGETATED) & (scl <= SCLValues.CLOUDS_MEDIUM_PROB)
+            (scl >= SCLValues.VEGETATED)
+            & (scl <= SCLValues.CLOUDS_MEDIUM_PROB)
         ) | (scl >= SCLValues.THIN_CIRRUS)
 
-    return ((scl >= SCLValues.VEGETATED) & (scl <= SCLValues.CLOUDS_LOW_PROB)) | (
-        scl == SCLValues.SNOW_OR_ICE
-    )
+    return (
+        (scl >= SCLValues.VEGETATED) & (scl <= SCLValues.CLOUDS_LOW_PROB)
+    ) | (scl == SCLValues.SNOW_OR_ICE)
