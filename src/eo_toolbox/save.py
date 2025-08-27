@@ -16,9 +16,10 @@ from eo_toolbox.valid_types import XarrayObject
 
 
 class SaveMethod(Enum):
-    """Different Methods to use to save a xarray object."""
+    """Different Methods to use to save an xarray object."""
 
     RIO = auto()
+    ZARR = auto()
 
     @classmethod
     def list(cls) -> list[str]:
@@ -26,20 +27,46 @@ class SaveMethod(Enum):
         return [member.name for member in cls]
 
 
-@validate_call
-def save_xr(
+# @validate_call
+def save_xarray(
     array: XarrayObject,
     *,
     savepath: Path,
+    auto_suffix: bool = True,
     method: SaveMethod = SaveMethod.RIO,
 ) -> None:
-    """Save a xarray object to disk."""
+    """Save an xarray object to disk.
+
+    The file suffix will automatically be changed accordingly.
+
+    Methods:
+    - RIO: saves to tiff with rioxarray
+    - ZARR: save as a zarr file
+
+    """
     savepath.parent.mkdir(parents=True, exist_ok=True)
-    if savepath.exists():
+    if auto_suffix:
+        match method:
+            case SaveMethod.RIO:
+                savepath = savepath.with_suffix(".tiff")
+            case SaveMethod.ZARR:
+                savepath = savepath.with_suffix(".zarr")
+    if savepath.is_file():
         savepath.unlink()
     match method:
         case SaveMethod.RIO:
-            array.rio.to_raster(savepath, driver="GTiff")
+            array.rio.to_raster(
+                savepath,
+                driver="GTiff",
+                compress="lzw",
+            )
+        case SaveMethod.ZARR:
+            array.to_zarr(
+                savepath,
+                zarr_format=2,
+                consolidated=False,
+                mode="w",
+            )
         case _:
             err: str = f"Method '{method.__name__}' is not known."
             raise ValueError(err)
