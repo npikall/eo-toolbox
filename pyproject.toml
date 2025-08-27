@@ -13,6 +13,7 @@ dependencies = [
     "odc-stac>=0.4.0",
     "pydantic>=2.11.7",
     "pystac-client>=0.9.0",
+    "rioxarray>=0.19.0",
     "xarray>=2025.7.1",
 ]
 
@@ -37,12 +38,13 @@ lint.select = ["ALL"]
 lint.ignore = [
     "ANN401", # Any type in func args are not allowed
     "D203",   # no blank lines between class def and docstring
+    # "D204",   # no blank lines between class docstring and body
     "D213",   # multiline summary should start in first line
     "PGH",    # pygrep hooks are ignored
     "TD002",  # todo author assignment is ignored
     "TD003",  # todo issue assignment is ignored
     "T201",   # allow print statements
-    "COM812", # missing trailing comma is disabled
+    # "COM812", # missing trailing comma is disabled
 ]
 
 [tool.ruff.format]

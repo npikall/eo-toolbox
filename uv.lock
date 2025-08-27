@@ -235,6 +235,7 @@ dependencies = [
     { name = "odc-stac" },
     { name = "pydantic" },
     { name = "pystac-client" },
+    { name = "rioxarray" },
     { name = "xarray" },
 ]
 
@@ -253,6 +254,7 @@ requires-dist = [
     { name = "odc-stac", specifier = ">=0.4.0" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pystac-client", specifier = ">=0.9.0" },
+    { name = "rioxarray", specifier = ">=0.19.0" },
     { name = "xarray", specifier = ">=2025.7.1" },
 ]
 
@@ -771,6 +773,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d7ea76c37de6e41f11eb07559b103b1c02cafb3f7cf8/requests-2.32.4.tar.gz", hash = "sha256:27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422", size = 135258, upload_time = "2025-06-09T16:43:07.34Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/7c/e4/56027c4a6b4ae70ca9de302488c5ca95ad4a39e190093d6c1a8ace08341b/requests-2.32.4-py3-none-any.whl", hash = "sha256:27babd3cda2a6d50b30443204ee89830707d396671944c998b5975b031ac2b2c", size = 64847, upload_time = "2025-06-09T16:43:05.728Z" },
+]
+
+[[package]]
+name = "rioxarray"
+version = "0.19.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "packaging" },
+    { name = "pyproj" },
+    { name = "rasterio" },
+    { name = "xarray" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3d/8e/fe4e87460f8c62d8d5c683e09f19fbde5d9cfcfd0342d02df1f452999b5d/rioxarray-0.19.0.tar.gz", hash = "sha256:7819a0036fd874c8c8e280447cbbe43d8dc72fc4a14ac7852a665b1bdb7d4b04", size = 54600, upload_time = "2025-04-21T17:46:54.183Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/2a/2f/63d2cacc0e525f8e3398bcf32bd3620385f22cd1600834ec49d7f3597a7b/rioxarray-0.19.0-py3-none-any.whl", hash = "sha256:494ee4fff1781072d55ee5276f5d07b63d93b05093cb33b926a12186ba5bb8ef", size = 62151, upload_time = "2025-04-21T17:46:52.801Z" },
 ]
 
 [[package]]
