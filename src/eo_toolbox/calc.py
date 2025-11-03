@@ -12,7 +12,7 @@ def normalized_difference[T](
 
     >>> nd = (band1 - band2) / (band1 + band2)
     """
-    return (band1 - band2 * 1.0) / (band1 + band2)
+    return (band1 - band2 * 1.0) / (band1 + band2)  # type: ignore[unsupported-operator]
 
 
 def linear_to_decibel(val: npt.ArrayLike) -> npt.ArrayLike:

@@ -32,7 +32,7 @@ CONFIG: dict[str, CatalogConfig] = {
         url=HttpUrl("https://earth-search.aws.element84.com/v1"),
         collections=["sentinel-2-l2a"],
     ),
-    # TODO: Add CDSE and other collections
+    # TODO: Add CDSE and other collections  # noqa: FIX002
 }
 
 

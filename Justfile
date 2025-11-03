@@ -25,7 +25,7 @@ fmt:
 
 # Run the Typechecker (ty)
 types:
-    uvx mypy .
+    uvx ty check
 # uvx ty check
 
 # Run all Tools (Lint, Format, Typechecker)

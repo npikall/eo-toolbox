@@ -10,7 +10,6 @@ from enum import Enum, auto
 from pathlib import Path
 
 import rioxarray as rio  # noqa: F401
-from pydantic import validate_call
 
 from eo_toolbox.valid_types import XarrayObject
 
@@ -27,7 +26,6 @@ class SaveMethod(Enum):
         return [member.name for member in cls]
 
 
-# @validate_call
 def save_xarray(
     array: XarrayObject,
     *,

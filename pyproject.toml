@@ -44,7 +44,7 @@ lint.ignore = [
     "TD002",  # todo author assignment is ignored
     "TD003",  # todo issue assignment is ignored
     "T201",   # allow print statements
-    # "COM812", # missing trailing comma is disabled
+    "COM812", # missing trailing comma is disabled
 ]
 
 [tool.ruff.format]
