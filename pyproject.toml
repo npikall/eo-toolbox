@@ -4,7 +4,7 @@ requires = [ "uv-build>=0.9.28,<0.10" ]
 
 [project]
 name = "eo-toolbox"
-version = "0.0.0"
+version = "0.0.1"
 description = "A Toolbox to work with Earth Observation Data"
 readme = "README.md"
 authors = [ { name = "npikall", email = "nikolas.pikall@tuwien.ac.at" } ]
