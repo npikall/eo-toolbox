@@ -237,7 +237,7 @@ wheels = [
 
 [[package]]
 name = "eo-toolbox"
-version = "0.1.0"
+version = "0.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "numpy" },
@@ -264,10 +264,10 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "numpy", specifier = ">=2.3.2" },
-    { name = "odc-stac", specifier = ">=0.4.0" },
+    { name = "odc-stac", specifier = ">=0.4" },
     { name = "pydantic", specifier = ">=2.11.7" },
-    { name = "pystac-client", specifier = ">=0.9.0" },
-    { name = "rioxarray", specifier = ">=0.19.0" },
+    { name = "pystac-client", specifier = ">=0.9" },
+    { name = "rioxarray", specifier = ">=0.19" },
     { name = "xarray", specifier = ">=2025.7.1" },
 ]
 

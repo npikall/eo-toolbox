@@ -4,8 +4,7 @@ requires = [ "uv-build>=0.8.9,<0.9" ]
 
 [project]
 name = "eo-toolbox"
-version = "0.1.0"
-# dynamic = ["version"]
+version = "0.0.1"
 description = "A Toolbox to work with Earth Observation Data"
 readme = "README.md"
 authors = [ { name = "npikall", email = "nikolas.pikall@tuwien.ac.at" } ]
@@ -38,12 +37,11 @@ lint.ignore = [
   "ANN401", # Any type in func args are not allowed
   "COM812", # missing trailing comma is disabled
   "D203",   # no blank lines between class def and docstring
-  # "D204",   # no blank lines between class docstring and body
-  "D213",  # multiline summary should start in first line
-  "PGH",   # pygrep hooks are ignored
-  "T201",  # allow print statements
-  "TD002", # todo author assignment is ignored
-  "TD003", # todo issue assignment is ignored
+  "D213",   # multiline summary should start in first line
+  "PGH",    # pygrep hooks are ignored
+  "T201",   # allow print statements
+  "TD002",  # todo author assignment is ignored
+  "TD003",  # todo issue assignment is ignored
 ]
 
 lint.fixable = [ "ALL" ]
