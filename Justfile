@@ -93,7 +93,7 @@ clean-test:
 # install dependencies in local venv
 [group("repo")]
 venv:
-    uv sync
+    uv sync --all-extras --all-groups
 
 [confirm("Do you really want to bump? (y/n)")]
 [private]
