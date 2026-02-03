@@ -1,18 +1,23 @@
 [build-system]
 build-backend = "uv_build"
-requires = [ "uv-build>=0.8.9,<0.9" ]
+requires = [ "uv-build>=0.9.28,<0.10" ]
 
 [project]
 name = "eo-toolbox"
-version = "0.0.1"
+version = "0.0.0"
 description = "A Toolbox to work with Earth Observation Data"
 readme = "README.md"
 authors = [ { name = "npikall", email = "nikolas.pikall@tuwien.ac.at" } ]
 requires-python = ">=3.13"
 classifiers = [
+  "Intended Audience :: Science/Research",
+  "Natural Language :: English",
+  "Operating System :: POSIX",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Software Development :: Libraries",
 ]
 dependencies = [
   "numpy>=2.3.2",
@@ -24,24 +29,39 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [ "pre-commit", "pytest", "pytest-cov", "ruff", "ty" ]
-docs = [ "mkdocstrings-python>=2.0.1", "zensical>=0.0.11" ]
+# Unlike optional dependencies, development dependencies are local-only
+# and will not be included in the project requirements when
+# published to PyPI or other indexes
+dev = [ "pytest>=9.0.1", "pytest-cov>=7", "ruff>=0.14.14", "ty>=0.0.14" ]
+docs = [ "mkdocstrings-python>=2.0.1", "zensical>=0.0.20" ]
 
 [tool.ruff]
-line-length = 79
-exclude = [ "tests" ]
+line-length = 88
+indent-width = 4
+
+format.indent-style = "space"
+format.quote-style = "double"
 format.line-ending = "auto"
-format.docstring-code-line-length = 79
+format.skip-magic-trailing-comma = false
+format.docstring-code-line-length = "dynamic"
+format.docstring-code-format = false
 lint.select = [ "ALL" ]
 lint.ignore = [
   "ANN401", # Any type in func args are not allowed
-  "COM812", # missing trailing comma is disabled
-  "D203",   # no blank lines between class def and docstring
-  "D213",   # multiline summary should start in first line
+  "COM812", # missing-trailing-comma (may conflict with ruff formatter)
+  "D203",   # incorrect-blank-line-before-class (conflicts with D211)
+  "D213",   # multi-line-summary-second-line (conflicts with D212)
   "PGH",    # pygrep hooks are ignored
   "T201",   # allow print statements
   "TD002",  # todo author assignment is ignored
   "TD003",  # todo issue assignment is ignored
 ]
+lint.per-file-ignores."**/{tests}/*" = [ "ANN201", "D", "E402", "INP001", "S101" ]
+lint.per-file-ignores."__init__.py" = [ "E402" ]
+lint.fixable = [ "ALL" ]
+lint.unfixable = [  ]
+
+[tool.pytest.ini_options]
+addopts = "--cov=eo-toolbox --cov-report term-missing -rsx --verbose --color=yes"
 
 lint.fixable = [ "ALL" ]
