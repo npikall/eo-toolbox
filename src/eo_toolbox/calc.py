@@ -1,16 +1,21 @@
 """Module to performe different calculations."""
 
 import numpy as np
-import numpy.typing as npt  # type: ignore
+import numpy.typing as npt
 
 
 def normalized_difference[T](
     band1: T,
     band2: T,
 ) -> T:
-    """Return the normalized difference between two bands.
+    r"""Return the normalized difference between two bands.
 
-    >>> nd = (band1 - band2) / (band1 + band2)
+    Notes
+    -----
+    $$
+    \text{nd} = \frac{\text{band}_1 - \text{band}_2}{\text{band}_1 + \text{band}_2}
+    $$
+
     """
     return (band1 - band2 * 1.0) / (band1 + band2)  # type: ignore[unsupported-operator]
 
@@ -18,9 +23,15 @@ def normalized_difference[T](
 def linear_to_decibel(val: npt.ArrayLike) -> npt.ArrayLike:
     """Convert a value from the linear domain to decibel units.
 
-    Params:
+    Params
+    ------
+    val: ArrayLike
+        Data that should be converted
+
+    Returns
     -------
-    - val: Data that should be converted
+    decibel:ArrayLike
+
     """
     return 10 * np.log10(val)
 

@@ -6,6 +6,10 @@ site_author = "Nikolas Pikall"
 copyright = """
 Copyright &copy; 2025 Nikolas Pikall
 """
+extra_javascript = [
+	"javascripts/mathjax.js",
+	"https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js",
+]
 # nav = [
 #   { "Get started" = "index.md" },
 #   { "Markdown in 5min" = "markdown.md" },
@@ -15,7 +19,7 @@ Copyright &copy; 2025 Nikolas Pikall
 
 [project.theme]
 # change this to "classic" to use the traditional Material for MkDocs look.
-#variant = "classic"
+# variant = "classic"
 
 language = "en"
 
