@@ -2,35 +2,145 @@
 _default:
     @just --list
 
-# Setup the virtual environment
+alias b := bump
+alias c := clean
+alias d := dist
+alias h := hooks
+alias q := check
+alias t := test
+
+PROJ := `uv version --short`
+
+# lint python code using ruff
+[group("style")]
+check-lint:
+    uv run ruff check . --fix
+
+# format python code using ruff
+[group("style")]
+check-format:
+    uv run ruff format .
+
+# run the type checker ty
+[group("style")]
+check-types:
+    uv run ty check
+
+# lint, format with ruff and type-check with ty
+[group("style")]
+check: check-lint check-format check-types
+
+# run tests with coverage
+[group("test")]
+test:
+    uv run pytest tests/
+
+# run tests for all the supported Python versions
+[group("test")]
+testall:
+    uv run --python=3.10 pytest
+    uv run --python=3.12 pytest
+    uv run --python=3.14 pytest
+
+# run all the formatting, linting, and testing commands
+[group("test")]
+ci PYTHON="3.12":
+    uv run --python={{ PYTHON }} ruff format .
+    uv run --python={{ PYTHON }} ruff check . --fix
+    uv run --python={{ PYTHON }} ty check .
+    uv run --python={{ PYTHON }} pytest tests/
+
+# setup the pre-commit hooks
+[group("repo")]
+hooks:
+    uvx prek install
+
+# print the current status of the project
+[group("repo")]
+status:
+    @echo "Project Version: {{ PROJ }}"
+    @echo "Running on: `uname`"
+
+# clean all python build/compilation files and directories
+[group("repo")]
+clean: clean-build clean-pyc clean-test
+
+# remove build artifacts
+[private]
+clean-build:
+    rm -fr build/
+    rm -fr site/
+    rm -fr dist/
+    rm -fr .eggs/
+    find . -name '*.egg-info' -exec rm -fr {} +
+    find . -name '*.egg' -exec rm -f {} +
+
+# remove Python file artifacts
+[private]
+clean-pyc:
+    find . -name '*.pyc' -exec rm -f {} +
+    find . -name '*.pyo' -exec rm -f {} +
+    find . -name '*~' -exec rm -f {} +
+    find . -name '__pycache__' -exec rm -fr {} +
+
+# remove test and coverage artifacts
+[private]
+clean-test:
+    rm -f .coverage
+    rm -fr htmlcov/
+    rm -fr .pytest_cache
+
+# install dependencies in local venv
+[group("repo")]
 venv:
     uv sync
 
-# Setup the virtual environment for dev dependencies
-venv-dev:
-    uv sync --group dev
+[confirm("Do you really want to bump? (y/n)")]
+[private]
+prompt-confirm:
 
-# Run the test suite
-test:
-    uv run pytest tests/ --color=yes --verbose
+# bump the version, commit the changes and add a tag (increment can be major, minor, patch,...)
+[group("chore")]
+bump INCREMENT: && tag
+    @uv version --bump {{ INCREMENT }} --dry-run
+    @just prompt-confirm
+    uv version --bump {{ INCREMENT }}
 
-# Run the Linter (Ruff)
-lint:
-    uvx ruff check . --fix
+# tag the latest version
+[group("chore")]
+tag VERSION=`uv version --short`:
+    git add pyproject.toml
+    git add uv.lock
+    git commit -m "Bumped version to {{ VERSION }}"
+    git tag "v{{ VERSION }}"
+    @echo "{{ GREEN }}{{ BOLD }}Version has been bumped to {{ VERSION }}.{{ NORMAL }}"
 
-# Run the Formatter (Ruff)
-fmt:
-    uvx ruff format . --check
-    uvx ruff format .
+# build the source distribution and wheel file with uv (bump version first)
+[group("repo")]
+dist:
+    uv build
 
-# Run the Typechecker (ty)
-types:
-    uvx ty check
-# uvx ty check
+# serve the documentation
+[group("repo")]
+docs:
+    uv sync --group docs
+    uv run zensical serve
 
-# Run all Tools (Lint, Format, Typechecker)
-style: lint fmt types
+# initialize a git repo and add all files
+[group("chore")]
+init: venv
+    git init
+    just hooks
+    git add .
+    git commit -m "initial commit"
+    @echo "{{ GREEN }}{{ BOLD }}Git has been initialized{{ NORMAL }}"
 
-# Install pre-commit hooks
-hooks:
-    pre-commit install --hook-type commit-msg --hook-type pre-push
+# write the changelog
+[group("chore")]
+changelog:
+    uvx git-changelog -Tio CHANGELOG.md -Bauto -c angular -n pep440
+
+# release a new version
+[group("chore")]
+release VERSION: changelog && (bump VERSION)
+    git add CHANGELOG.md
