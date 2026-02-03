@@ -28,10 +28,3 @@ repos:
     rev: "v2.12.1"
     hooks:
       - id: pyproject-fmt
-
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: baa31a6c539795fd819fcd13548ad75c1d1249b6
-    hooks:
-      - id: commitizen
-      - id: commitizen-branch
-        stages: [pre-push]
