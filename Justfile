@@ -95,26 +95,6 @@ clean-test:
 venv:
     uv sync --all-extras --all-groups
 
-[confirm("Do you really want to bump? (y/n)")]
-[private]
-prompt-confirm:
-
-# bump the version, commit the changes and add a tag (increment can be major, minor, patch,...)
-[group("chore")]
-bump INCREMENT: && tag
-    @uv version --bump {{ INCREMENT }} --dry-run
-    @just prompt-confirm
-    uv version --bump {{ INCREMENT }}
-
-# tag the latest version
-[group("chore")]
-tag VERSION=`uv version --short`:
-    git add pyproject.toml
-    git add uv.lock
-    git commit -m "Bumped version to {{ VERSION }}"
-    git tag "v{{ VERSION }}"
-    @echo "{{ GREEN }}{{ BOLD }}Version has been bumped to {{ VERSION }}.{{ NORMAL }}"
-
 # build the source distribution and wheel file with uv (bump version first)
 [group("repo")]
 dist:
@@ -137,10 +117,30 @@ init: venv
 
 # write the changelog
 [group("chore")]
-changelog:
-    uvx git-changelog -Tio CHANGELOG.md -Bauto -c angular -n pep440
+changelog VERSION="auto":
+    uvx git-changelog -Tio CHANGELOG.md -B="{{VERSION}}" -c angular
 
-# release a new version
+
+# bump the version, commit and tag (<major, minor, patch> or semver)
 [group("chore")]
-release VERSION: changelog && (bump VERSION)
+bump VERSION: && tag
+    uv version  {{ VERSION }}
+    uv lock
+
+# tag the latest version
+[group("chore")]
+[private]
+tag VERSION=`uv version --short`:
+    git add pyproject.toml
+    git add uv.lock
+    git commit -m "chore: bumped version to {{VERSION}}"
+    git tag -a "v{{VERSION}}"
+
+# make a new release (e.g. "just release 0.1.2") (repo must be clean)
+[group("chore")]
+release VERSION: test
+    @just changelog "v{{VERSION}}"
     git add CHANGELOG.md
+    git commit -m "chore: updated Changelog"
+    @just bump "{{VERSION}}"
+    @echo "{{GREEN}}Success! Run 'git push && git push --tags' now.{{NORMAL}}"
