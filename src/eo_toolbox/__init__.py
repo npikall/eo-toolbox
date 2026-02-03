@@ -7,8 +7,3 @@ __all__ = [
     "mask",
     "stac",
 ]
-
-
-def hello() -> str:
-    """Return the greeting message."""
-    return "Hello from eo-toolbox!"
