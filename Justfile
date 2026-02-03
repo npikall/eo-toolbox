@@ -106,6 +106,11 @@ docs:
     uv sync --group docs
     uv run zensical serve
 
+# clean artifacts from the documentation
+clean-docs:
+    rm -rf .cache/
+    rm -rf site/
+
 # initialize a git repo and add all files
 [group("chore")]
 init: venv
