@@ -1,6 +1,6 @@
 """Calculate common Earth Observation Indices."""
 
-import xarray as xr  # type: ignore
+import xarray as xr
 
 from eo_toolbox.calc import normalized_difference
 

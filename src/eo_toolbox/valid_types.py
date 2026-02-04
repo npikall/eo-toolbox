@@ -20,9 +20,7 @@ def validate_iso_date_is_before_today(date_string: str) -> None:
         raise ValueError(err) from e
 
     if not (earliest_allowed_date <= day <= today):
-        err: str = (
-            f"Date must be before {today} and after {earliest_allowed_date}"
-        )
+        err: str = f"Date must be before {today} and after {earliest_allowed_date}"
         raise ValueError(err)
 
 
