@@ -1,6 +1,7 @@
-import eo_toolbox as etb
 import numpy as np
 import xarray as xr
+
+import eo_toolbox as etb
 
 
 def test_normalized_difference_returns_correct():
@@ -25,5 +26,5 @@ def test_normalized_difference_returns_correct():
         dims="x",
         coords={"x": np.arange(0, length)},
     )
-    assert type(result) == xr.DataArray
+    assert type(result) is xr.DataArray
     xr.testing.assert_equal(result, expected)
