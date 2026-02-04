@@ -1,4 +1,3 @@
-
 name: Run Tests for different Platforms
 on:
   push:
@@ -14,8 +13,7 @@ jobs:
     strategy:
       matrix:
         python-version:
-          - "3.10"
-          - "3.12"
+          - "3.13"
           - "3.14"
         os:
           - ubuntu-latest
