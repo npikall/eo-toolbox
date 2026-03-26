@@ -1,11 +1,14 @@
 """Calculate common Earth Observation Indices."""
 
+from typing import TypedDict, Unpack
+
 import xarray as xr
 
+from eo_toolbox._protocol import SupportsMathOps
 from eo_toolbox.calc import normalized_difference
 
 
-def ndvi[T](red: T, nir: T) -> T:
+def nd_vegetation_index[T: SupportsMathOps](red: T, nir: T) -> T:
     """Compute the NDVI from the Red and the Near-Infrared Bands.
 
     NDVI = Normalized Difference Vegetation Index
@@ -19,7 +22,7 @@ def ndvi[T](red: T, nir: T) -> T:
     return normalized_difference(band1=nir, band2=red)
 
 
-def gndvi[T](green: T, nir: T) -> T:
+def green_nd_vegetation_index[T: SupportsMathOps](green: T, nir: T) -> T:
     """Compute the GNDVI from the Green and the Near-Infrared Bands.
 
     GNDVI = Green Normalized Difference Vegetation Index
@@ -34,7 +37,7 @@ def gndvi[T](green: T, nir: T) -> T:
     return normalized_difference(band1=nir, band2=green)
 
 
-def ndmi[T](nir: T, swir: T) -> T:
+def nd_moisture_index[T: SupportsMathOps](nir: T, swir: T) -> T:
     """Compute the NDMI from the Near-Infrared and the Shortwave-IR Bands.
 
     NDMI = Normalized Difference Moisture Index
@@ -56,11 +59,11 @@ def ndmi[T](nir: T, swir: T) -> T:
     Resources:
     ---------
     https://eos.com/make-an-analysis/ndmi/
-    """  # noqa
+    """  # noqa: E501
     return normalized_difference(band1=nir, band2=swir)
 
 
-def ndwi[T](green: T, nir: T) -> T:
+def nd_water_index[T: SupportsMathOps](green: T, nir: T) -> T:
     """Compute the NDWI from the Green and NIR Bands.
 
     NDWI = Normalized Difference Water Index
@@ -75,27 +78,29 @@ def ndwi[T](green: T, nir: T) -> T:
     return normalized_difference(band1=green, band2=nir)
 
 
-def savi(
-    nir: xr.DataArray,
-    red: xr.DataArray,
-    soil_adjustment_factor: float | xr.DataArray = 0.5,
-) -> xr.DataArray:
+def soil_adjusted_vegetation_index[T: SupportsMathOps](
+    nir: T,
+    red: T,
+    adjustment_factor: float = 0.5,
+) -> T:
     """Compute the SAVI from NIR and Red bands.
 
     SAVI = Soil Adjusted Vegetation Index
 
     Formula: savi = ((nir - red) / (nir + red + l)) * (1 + l)
+        * l = adjustment_factor
 
     Resources:
     ---------
     https://eos.com/blog/vegetation-indices/
     """
-    return ((nir - red) / (nir + red + soil_adjustment_factor)) * (
-        1 + soil_adjustment_factor
-    )
+    return ((nir - red) / (nir + red + adjustment_factor)) * (adjustment_factor + 1)
 
 
-def osavi(nir: xr.DataArray, red: xr.DataArray) -> xr.DataArray:
+def optimized_soil_adjusted_vegetation_index[T: SupportsMathOps](
+    nir: T,
+    red: T,
+) -> T:
     """Compute the OSAVI from the Red and NIR Bands.
 
     OSAVI = Optimized Soil Adjusted Vegetation Index
@@ -107,11 +112,11 @@ def osavi(nir: xr.DataArray, red: xr.DataArray) -> xr.DataArray:
     return (nir - red) / (nir + red + 0.16)
 
 
-def arvi(
-    nir: xr.DataArray,
-    red: xr.DataArray,
-    blue: xr.DataArray,
-) -> xr.DataArray:
+def atmospherically_resistant_vegetation_index[T: SupportsMathOps](
+    nir: T,
+    red: T,
+    blue: T,
+) -> T:
     """Compute the ARVI from the Red, Blue and NIR Bands.
 
     ARVI = Atmospherically Resistant Vegetation Index
@@ -122,18 +127,23 @@ def arvi(
     ---------
     https://eos.com/blog/vegetation-indices/
     """
-    return (nir - (2 * red) + blue) / (nir + (2 * red) + blue)
+    return (nir - (red * 2) + blue) / (nir + (red * 2) + blue)
 
 
-def evi(  # noqa: PLR0913
-    nir: xr.DataArray,
-    red: xr.DataArray,
-    blue: xr.DataArray,
-    *,
-    c1: float = 6,
-    c2: float = 7.5,
-    l_factor: float = 1,
-) -> xr.DataArray:
+class EVIParams(TypedDict):
+    """Optional Kwargs for the EVI function."""
+
+    c1: float
+    c2: float
+    l_factor: float
+
+
+def enhanced_vegetation_index[T: SupportsMathOps](
+    nir: T,
+    red: T,
+    blue: T,
+    **kwargs: Unpack[EVIParams],
+) -> T:
     """Compute the EVI from Red, NIR and Blue Bands.
 
     EVI = Enhanced Vegetation Index
@@ -144,14 +154,17 @@ def evi(  # noqa: PLR0913
     ---------
     https://eos.com/blog/vegetation-indices/
     """
-    return 2.5 * ((nir - red) / (nir + (c1 * red) - (c2 * blue) + l_factor))
+    c1 = kwargs.get("c1", 6)
+    c2 = kwargs.get("c2", 7.5)
+    l_factor = kwargs.get("l_factor", 1)
+    return ((nir - red) / (nir + (red * c1) - (blue * c2) + l_factor)) * 2.5
 
 
-def vari(
-    green: xr.DataArray,
-    red: xr.DataArray,
-    blue: xr.DataArray,
-) -> xr.DataArray:
+def visible_atmospherically_resistant_index[T: SupportsMathOps](
+    green: T,
+    red: T,
+    blue: T,
+) -> T:
     """Compute the VARI from the Green, Red and Blue Bands.
 
     VARI = Visible Atmospherically Resistant Index
@@ -165,7 +178,7 @@ def vari(
     return (green - red) / (green + red - blue)
 
 
-def nbr[T](nir: T, swir: T) -> T:
+def normalized_burn_ratio[T: SupportsMathOps](nir: T, swir: T) -> T:
     """Compute the NBR from the Near-Infrared and Shortwave-IR Bands.
 
     NBR = Normalized Burn Ratio
@@ -179,11 +192,9 @@ def nbr[T](nir: T, swir: T) -> T:
     return normalized_difference(band1=nir, band2=swir)
 
 
-def sipi(
-    nir: xr.DataArray,
-    red: xr.DataArray,
-    blue: xr.DataArray,
-) -> xr.DataArray:
+def structure_insensitive_pigment_index[T: SupportsMathOps](
+    nir: T, red: T, blue: T
+) -> T:
     """Compute the SIPI from the NIR, Red and Blue Bands.
 
     SIPI = Structure Insensitive Pigment (Vegetation) Index
@@ -197,7 +208,7 @@ def sipi(
     return (nir - blue) / (nir - red)
 
 
-def gci(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
+def green_chlorophyll_index[T: SupportsMathOps](green: T, nir: T) -> T:
     """Compute the GCI from the Green and NIR Bands.
 
     GCI = Green Chlorophyll Index
@@ -211,7 +222,7 @@ def gci(green: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return (nir / green) - 1
 
 
-def ndsi[T](green: T, swir: T) -> T:
+def nd_snow_index[T: SupportsMathOps](green: T, swir: T) -> T:
     """Compute the NDSI from the Green and Shortwave-IR Bands.
 
     NDSI = Normalized Difference Snow Index
@@ -243,7 +254,7 @@ def istack(
     return xr.concat([ndvi, ndwi, ndsi], dim="band")
 
 
-def recl(red: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
+def red_edge_chlorophyll_index[T: SupportsMathOps](red: T, nir: T) -> T:
     """Compute the RECL from the Red and NIR Bands.
 
     RECL = Red Edge Chlorophyll Index
@@ -257,7 +268,7 @@ def recl(red: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
     return (nir / red) - 1
 
 
-def ndre[T](nir: T, red_edge: T) -> T:
+def nd_red_edge_index[T: SupportsMathOps](nir: T, red_edge: T) -> T:
     """Compute the NDRE from the NIR and Red Edge Bands.
 
     NDRE = Normalized Difference Red Edge Index
@@ -271,7 +282,7 @@ def ndre[T](nir: T, red_edge: T) -> T:
     return normalized_difference(band1=nir, band2=red_edge)
 
 
-def msi(swir: xr.DataArray, nir: xr.DataArray) -> xr.DataArray:
+def moisture_stress_index[T: SupportsMathOps](swir: T, nir: T) -> T:
     """Compute the MSI from the Shortwave-IR and NIR Bands.
 
     MSI = Moisture Stress Index

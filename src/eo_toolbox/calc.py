@@ -4,10 +4,7 @@ import numpy as np
 import numpy.typing as npt
 
 
-def normalized_difference[T](
-    band1: T,
-    band2: T,
-) -> T:
+def normalized_difference[T](band1: T, band2: T) -> T:
     r"""Return the normalized difference between two bands.
 
     Notes
@@ -17,7 +14,7 @@ def normalized_difference[T](
     $$
 
     """
-    return (band1 - band2 * 1.0) / (band1 + band2)  # type: ignore[unsupported-operator]
+    return (band1 - band2) / (band1 + band2)  # ty:ignore[unsupported-operator]
 
 
 def linear_to_decibel(val: npt.ArrayLike) -> npt.ArrayLike:
