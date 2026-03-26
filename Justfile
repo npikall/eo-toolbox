@@ -1,151 +1,154 @@
+set windows-shell := ["powershell"]
+
 # Default command lists all available recipes
+[default]
 _default:
     @just --list
 
-alias b := bump
 alias c := clean
-alias d := dist
+alias d := docs
 alias h := hooks
+alias i := info
+alias l := lint
 alias q := check
 alias t := test
+alias hi := hooks-install
+alias fmt := format
 
-PROJ := `uv version --short`
+# display the system/project information
+[group("chore")]
+info:
+    @echo "{{ CYAN }}Arch{{ NORMAL }}: {{ arch() }}"
+    @echo "{{ CYAN }}OS{{ NORMAL }}: {{ os_family() }}, {{ os() }}"
+    @echo "{{ CYAN }}Num CPU's{{ NORMAL }}: {{ num_cpus() }}"
+    @echo "{{ CYAN }}Project{{ NORMAL }}: `uv version`"
 
-# lint python code using ruff
+# run the linter [arg:<full|concise|...>]
 [group("style")]
-check-lint:
-    uv run ruff check . --fix
+lint arg="concise":
+    uv run ruff check . --fix --output-format={{ arg }}
 
-# format python code using ruff
+# run the formatter
 [group("style")]
-check-format:
+format:
     uv run ruff format .
 
-# run the type checker ty
+# run the type checker [arg:<full|concise|...>]
 [group("style")]
-check-types:
-    uv run ty check
+types arg="concise":
+    uv run ty check --output-format={{ arg }}
 
-# lint, format with ruff and type-check with ty
+# lint, format and type-check [arg:<full|concise|...>]
 [group("style")]
-check: check-lint check-format check-types
+check arg="concise":
+    -@just lint {{ arg }}
+    -@just format
+    -@just types {{ arg }}
 
-# run tests with coverage
+# run the tests
 [group("test")]
-test:
-    uv run pytest tests/
+test *args:
+    uv run pytest tests/ {{ args }}
 
-# run tests for all the supported Python versions
+# run the tests in different Python versions
 [group("test")]
-testall:
-    uv run --python=3.10 pytest
-    uv run --python=3.12 pytest
-    uv run --python=3.14 pytest
+testall *args:
+    uv run --python=3.10 pytest {{ args }}
+    uv run --python=3.12 pytest {{ args }}
+    uv run --python=3.14 pytest {{ args }}
 
-# run all the formatting, linting, and testing commands
+# run the formatter, linter, typechecker and the tests
 [group("test")]
-ci PYTHON="3.12":
-    uv run --python={{ PYTHON }} ruff format .
-    uv run --python={{ PYTHON }} ruff check . --fix
-    uv run --python={{ PYTHON }} ty check .
-    uv run --python={{ PYTHON }} pytest tests/
+ci python="3.12":
+    uv run --python={{ python }} ruff format .
+    uv run --python={{ python }} ruff check . --fix
+    uv run --python={{ python }} ty check .
+    uv run --python={{ python }} pytest tests/
 
-# setup the pre-commit hooks
-[group("repo")]
-hooks:
+# install the pre-commit hooks
+[group("dev")]
+hooks-install:
     uvx prek install
 
-# print the current status of the project
-[group("repo")]
-status:
-    @echo "Project Version: {{ PROJ }}"
-    @echo "Running on: `uname`"
+# run the pre-commit hooks
+[group("dev")]
+hooks:
+    uvx prek run --all-files
 
-# clean all python build/compilation files and directories
-[group("repo")]
-clean: clean-build clean-pyc clean-test
+# setup the workspace
+[group("dev")]
+dev: hooks-install venv
 
-# remove build artifacts
-[private]
-clean-build:
-    rm -fr build/
-    rm -fr site/
-    rm -fr dist/
+# clean all build/compilation and cache files and directories
+[group("dev")]
+clean:
+    rm -fr .cache/
+    rm -fr .coverage
     rm -fr .eggs/
-    find . -name '*.egg-info' -exec rm -fr {} +
+    rm -fr .pytest_cache/
+    rm -fr .ruff_cache/
+    rm -fr .venv/
+    rm -fr build/
+    rm -fr dist/
+    rm -fr htmlcov/
+    rm -fr init.just
+    rm -fr site/
     find . -name '*.egg' -exec rm -f {} +
-
-# remove Python file artifacts
-[private]
-clean-pyc:
+    find . -name '*.egg-info' -exec rm -fr {} +
     find . -name '*.pyc' -exec rm -f {} +
     find . -name '*.pyo' -exec rm -f {} +
     find . -name '*~' -exec rm -f {} +
+    find . -name '.DS_Store' -exec rm -fr {} +
     find . -name '__pycache__' -exec rm -fr {} +
 
-# remove test and coverage artifacts
-[private]
-clean-test:
-    rm -f .coverage
-    rm -fr htmlcov/
-    rm -fr .pytest_cache
-
 # install dependencies in local venv
-[group("repo")]
+[group("dev")]
 venv:
     uv sync --all-extras --all-groups
 
-# build the source distribution and wheel file with uv (bump version first)
-[group("repo")]
+# update dependencies in the lock file
+[group("dev")]
+update:
+    uv lock --upgrade
+
+# build the source distribution and wheel file
+[group("dev")]
 dist:
     uv build
 
-# serve the documentation
-[group("repo")]
-docs:
-    uv sync --group docs
+# serve the documentation on localhost
+[group("dev")]
+docs: venv
     uv run zensical serve
 
-# clean artifacts from the documentation
-clean-docs:
-    rm -rf .cache/
-    rm -rf site/
+_ensure_clean:
+    @git diff --quiet
+    @git diff --cached --quiet
 
-# initialize a git repo and add all files
-[group("chore")]
-init: venv
-    git init
-    just hooks
-    git add .
-    git commit -m "initial commit"
-    @echo "{{ GREEN }}{{ BOLD }}Git has been initialized{{ NORMAL }}"
-
-# write the changelog
-[group("chore")]
-changelog VERSION="auto":
-    uvx git-changelog -Tio CHANGELOG.md -B="{{VERSION}}" -c angular
-
-
-# bump the version, commit and tag (<major, minor, patch> or semver)
-[group("chore")]
-bump VERSION: && tag
-    uv version  {{ VERSION }}
+_set_version target:
+    case "{{ target }}" in \
+        [0-9]*.[0-9]*.[0-9]*) \
+            uv version {{ target }} ;; \
+        *) \
+            uv version --bump {{ target }} ;; \
+    esac
     uv lock
 
-# tag the latest version
+# write the changelog from commit messages (https://git-cliff.org/)
 [group("chore")]
-[private]
-tag VERSION=`uv version --short`:
-    git add pyproject.toml
-    git add uv.lock
-    git commit -m "chore: bumped version to {{VERSION}}"
-    git tag -a "v{{VERSION}}"
+changelog *args:
+    uvx git-cliff -o {{ args }}
 
-# make a new release (e.g. "just release 0.1.2") (repo must be clean)
+_commit_and_tag version=`uv version --short`:
+    git add pyproject.toml uv.lock CHANGELOG.md
+    git commit -m "chore(release): bump version to {{ version }}"
+    git tag -a "v{{ version }}"
+
+# make a new release [target:<major|minor|patch|...> or semver]
 [group("chore")]
-release VERSION: test
-    @just changelog "v{{VERSION}}"
-    git add CHANGELOG.md
-    git commit -m "chore: updated Changelog"
-    @just bump "{{VERSION}}"
-    @echo "{{GREEN}}Success! Run 'git push && git push --tags' now.{{NORMAL}}"
+release target: ci
+    @just _ensure_clean
+    @just _set_version {{ target }}
+    @just changelog --tag `uv version --short`
+    @just _commit_and_tag
+    @echo "{{ GREEN }}Release complete. Run 'git push && git push --tags'.{{ NORMAL }}"

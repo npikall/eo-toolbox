@@ -1,9 +1,10 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v0.1.13-3-g26cd71f
+_commit: v0.3.0
 _src_path: gh:npikall/py-bootstrap
 author_email: nikolas.pikall@gmail.com
 author_fullname: Nikolas Pikall
 author_username: npikall
+changelog_tool: git-cliff
 ci_github: true
 ci_github_workflows:
 - Lint_Format
@@ -12,9 +13,6 @@ ci_github_workflows:
 - Test_Platforms
 ci_gitlab: false
 copyright_license: MIT
-docs_engine: zensical
 include_docs: true
-pre_commit: prek
 project_name: eo-toolbox
 repo_name: eo_toolbox
-use_goreleaser: false
